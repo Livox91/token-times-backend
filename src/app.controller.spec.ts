@@ -18,5 +18,12 @@ describe('AppController', () => {
     it('should return "Hello World!"', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
+
+    it('should return health status', () => {
+      const health = appController.healthCheck();
+
+      expect(health.status).toBe('ok');
+      expect(health.timestamp).toEqual(expect.any(String));
+    });
   });
 });
