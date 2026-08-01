@@ -4,6 +4,8 @@ import { Model } from 'mongoose';
 
 import { Events, EventsDocument } from './events.entity';
 
+type EventWritePayload = Partial<Events>;
+
 @Injectable()
 export class EventsService {
     constructor(
@@ -11,7 +13,7 @@ export class EventsService {
         private readonly eventsModel: Model<EventsDocument>,
     ) { }
 
-    async create(data: Partial<Events>): Promise<EventsDocument> {
+    async create(data: EventWritePayload): Promise<EventsDocument> {
         const event = new this.eventsModel(data);
         return event.save();
     }
@@ -24,7 +26,7 @@ export class EventsService {
     }
 
     async findById(id: string): Promise<EventsDocument> {
-        const event = await this.eventsModel.findOne({ id }).exec();
+        const event = await this.eventsModel.findOne({ _id: id }).exec();
 
         if (!event) {
             throw new NotFoundException(`Event ${id} not found`);
@@ -35,10 +37,10 @@ export class EventsService {
 
     async update(
         id: string,
-        update: Partial<Events>,
+        update: EventWritePayload,
     ): Promise<EventsDocument> {
         const event = await this.eventsModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +56,7 @@ export class EventsService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.eventsModel.findOneAndDelete({ id }).exec();
+        const result = await this.eventsModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`Event ${id} not found`);

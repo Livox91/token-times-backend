@@ -29,7 +29,6 @@ export class KnowlegeHubController {
     @Post()
     async createKnowlegeHub(
         @Body() body: {
-            id: string;
             question: string;
             answer: string;
             author: string;
@@ -45,7 +44,6 @@ export class KnowlegeHubController {
     async updateKnowlegeHub(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             question: string;
             answer: string;
             author: string;

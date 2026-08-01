@@ -5,9 +5,6 @@ export type InterviewsDocument = HydratedDocument<Interviews>;
 
 @Schema()
 export class Interviews {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ type: [String], default: [] })
     questions!: string[];
 

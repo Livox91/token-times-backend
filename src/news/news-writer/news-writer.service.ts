@@ -68,11 +68,12 @@ export class NewsWriterService {
             console.log('Received response from Python AI Agent:', data);
 
             await this.draftsService.create({
-                article_id: article._id,
-                original_title: article.title,
+                original_articleid: article._id,
                 summary: data.summary,
                 article: data.article,
                 headlines: data.headlines, // <-- Using the sanitized data
+                category: data.category,
+                tags: data.tags,
                 status: 'draft',
             });
 

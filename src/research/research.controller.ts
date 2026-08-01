@@ -29,7 +29,6 @@ export class ResearchController {
     @Post()
     async createResearch(
         @Body() body: {
-            id: string;
             title: string;
             author: string;
             publish_date: Date;
@@ -43,7 +42,6 @@ export class ResearchController {
     async updateResearch(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             title: string;
             author: string;
             publish_date: Date;

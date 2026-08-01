@@ -24,7 +24,7 @@ export class RegulationService {
     }
 
     async findById(id: string): Promise<RegulationDocument> {
-        const regulation = await this.regulationModel.findOne({ id }).exec();
+        const regulation = await this.regulationModel.findOne({ _id: id }).exec();
 
         if (!regulation) {
             throw new NotFoundException(`Regulation ${id} not found`);
@@ -38,7 +38,7 @@ export class RegulationService {
         update: Partial<Regulation>,
     ): Promise<RegulationDocument> {
         const regulation = await this.regulationModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +54,7 @@ export class RegulationService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.regulationModel.findOneAndDelete({ id }).exec();
+        const result = await this.regulationModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`Regulation ${id} not found`);

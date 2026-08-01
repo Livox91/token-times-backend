@@ -5,9 +5,6 @@ export type ResearchDocument = HydratedDocument<Research>;
 
 @Schema()
 export class Research {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ required: true })
     title!: string;
 

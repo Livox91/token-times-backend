@@ -5,9 +5,6 @@ export type RegulationDocument = HydratedDocument<Regulation>;
 
 @Schema()
 export class Regulation {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ required: true })
     title!: string;
 

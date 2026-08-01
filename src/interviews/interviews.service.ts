@@ -24,7 +24,7 @@ export class InterviewsService {
     }
 
     async findById(id: string): Promise<InterviewsDocument> {
-        const interview = await this.interviewsModel.findOne({ id }).exec();
+        const interview = await this.interviewsModel.findOne({ _id: id }).exec();
 
         if (!interview) {
             throw new NotFoundException(`Interview ${id} not found`);
@@ -38,7 +38,7 @@ export class InterviewsService {
         update: Partial<Interviews>,
     ): Promise<InterviewsDocument> {
         const interview = await this.interviewsModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +54,7 @@ export class InterviewsService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.interviewsModel.findOneAndDelete({ id }).exec();
+        const result = await this.interviewsModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`Interview ${id} not found`);

@@ -5,9 +5,6 @@ export type KnowlegeHubDocument = HydratedDocument<KnowlegeHub>;
 
 @Schema()
 export class KnowlegeHub {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ required: true })
     question!: string;
 

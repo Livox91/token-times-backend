@@ -29,7 +29,6 @@ export class RegulationController {
     @Post()
     async createRegulation(
         @Body() body: {
-            id: string;
             title: string;
             authority: string;
             publish_date: Date;
@@ -43,7 +42,6 @@ export class RegulationController {
     async updateRegulation(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             title: string;
             authority: string;
             publish_date: Date;

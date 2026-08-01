@@ -29,7 +29,6 @@ export class MagzineController {
     @Post()
     async createMagzine(
         @Body() body: {
-            id: string;
             title: string;
             cover_img: string;
             description: string;
@@ -46,7 +45,6 @@ export class MagzineController {
     async updateMagzine(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             title: string;
             cover_img: string;
             description: string;

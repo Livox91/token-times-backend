@@ -24,7 +24,7 @@ export class KnowlegeHubService {
     }
 
     async findById(id: string): Promise<KnowlegeHubDocument> {
-        const knowlegeHub = await this.knowlegeHubModel.findOne({ id }).exec();
+        const knowlegeHub = await this.knowlegeHubModel.findOne({ _id: id }).exec();
 
         if (!knowlegeHub) {
             throw new NotFoundException(`KnowlegeHub ${id} not found`);
@@ -38,7 +38,7 @@ export class KnowlegeHubService {
         update: Partial<KnowlegeHub>,
     ): Promise<KnowlegeHubDocument> {
         const knowlegeHub = await this.knowlegeHubModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +54,7 @@ export class KnowlegeHubService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.knowlegeHubModel.findOneAndDelete({ id }).exec();
+        const result = await this.knowlegeHubModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`KnowlegeHub ${id} not found`);

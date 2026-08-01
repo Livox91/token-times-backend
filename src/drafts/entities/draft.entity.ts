@@ -8,25 +8,13 @@ export type DraftDocument = HydratedDocument<Draft>;
 @Schema()
 export class Draft {
     @Prop({ required: true })
-    article_id!: string;
-
-    @Prop({ required: true })
-    original_title!: string;
+    original_articleid!: string;
 
     @Prop({ required: true, type: String })
     article!: string;
 
     @Prop({ required: true, type: String })
     summary!: string;
-
-    @Prop({ required: true })
-    author!: string;
-
-    @Prop({ type: String })
-    image!: string;
-
-    @Prop({ type: String })
-    aprrox_time_to_read!: string;
 
     @Prop({ required: true })
     category!: Array<{
@@ -37,9 +25,6 @@ export class Draft {
     tags!: Array<{
         name: string;
     }>;
-
-    @Prop({ required: true })
-    views!: number;
 
     @Prop({ required: true })
     headlines!: Array<{

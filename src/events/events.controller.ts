@@ -29,7 +29,6 @@ export class EventsController {
     @Post()
     async createEvent(
         @Body() body: {
-            id: string;
             event_title: string;
             event_venue: string;
             event_adress: string;
@@ -48,7 +47,6 @@ export class EventsController {
     async updateEvent(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             event_title: string;
             event_venue: string;
             event_adress: string;

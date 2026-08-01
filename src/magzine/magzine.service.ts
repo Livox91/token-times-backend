@@ -24,7 +24,7 @@ export class MagzineService {
     }
 
     async findById(id: string): Promise<MagzineDocument> {
-        const magzine = await this.magzineModel.findOne({ id }).exec();
+        const magzine = await this.magzineModel.findOne({ _id: id }).exec();
 
         if (!magzine) {
             throw new NotFoundException(`Magzine ${id} not found`);
@@ -38,7 +38,7 @@ export class MagzineService {
         update: Partial<Magzine>,
     ): Promise<MagzineDocument> {
         const magzine = await this.magzineModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +54,7 @@ export class MagzineService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.magzineModel.findOneAndDelete({ id }).exec();
+        const result = await this.magzineModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`Magzine ${id} not found`);

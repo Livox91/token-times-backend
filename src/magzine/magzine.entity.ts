@@ -5,9 +5,6 @@ export type MagzineDocument = HydratedDocument<Magzine>;
 
 @Schema()
 export class Magzine {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ required: true })
     title!: string;
 

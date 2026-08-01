@@ -24,7 +24,7 @@ export class ResearchService {
     }
 
     async findById(id: string): Promise<ResearchDocument> {
-        const research = await this.researchModel.findOne({ id }).exec();
+        const research = await this.researchModel.findOne({ _id: id }).exec();
 
         if (!research) {
             throw new NotFoundException(`Research ${id} not found`);
@@ -38,7 +38,7 @@ export class ResearchService {
         update: Partial<Research>,
     ): Promise<ResearchDocument> {
         const research = await this.researchModel.findOneAndUpdate(
-            { id },
+            { _id: id },
             update,
             {
                 new: true,
@@ -54,7 +54,7 @@ export class ResearchService {
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.researchModel.findOneAndDelete({ id }).exec();
+        const result = await this.researchModel.findOneAndDelete({ _id: id }).exec();
 
         if (!result) {
             throw new NotFoundException(`Research ${id} not found`);

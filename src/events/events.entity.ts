@@ -5,9 +5,6 @@ export type EventsDocument = HydratedDocument<Events>;
 
 @Schema()
 export class Events {
-    @Prop({ required: true, unique: true, index: true })
-    id!: string;
-
     @Prop({ required: true })
     event_title!: string;
 

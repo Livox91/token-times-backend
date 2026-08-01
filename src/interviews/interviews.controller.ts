@@ -29,7 +29,6 @@ export class InterviewsController {
     @Post()
     async createInterview(
         @Body() body: {
-            id: string;
             questions: string[];
             answers: string[];
             interviewee_name: string;
@@ -48,7 +47,6 @@ export class InterviewsController {
     async updateInterview(
         @Param('id') id: string,
         @Body() body: Partial<{
-            id: string;
             questions: string[];
             answers: string[];
             interviewee_name: string;
