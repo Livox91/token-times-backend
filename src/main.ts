@@ -9,7 +9,7 @@ export async function createApp() {
     origin: [
       'http://localhost:5173',
       'https://token-times-gules.vercel.app', // <--- Add this line!
-
+      'https://tokenstimes.com'
     ],
     credentials: true,
   });
