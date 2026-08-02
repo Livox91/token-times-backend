@@ -8,6 +8,7 @@ export async function createApp() {
   app.enableCors({
     origin: [
       'http://localhost:5173',
+      'https://token-times-gules.vercel.app', // <--- Add this line!
 
     ],
     credentials: true,
