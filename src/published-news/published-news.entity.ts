@@ -38,7 +38,7 @@ export class PublishedNews {
     @Prop({ type: [String], default: [] })
     display_section!: string[];
 
-    @Prop({ default: 'active' })
+    @Prop({ default: 'published' })
     status!: string;
 }
 
