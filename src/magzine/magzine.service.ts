@@ -1,62 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { Magzine, MagzineDocument } from './magzine.entity';
 
 @Injectable()
 export class MagzineService {
-    constructor(
-        @InjectModel(Magzine.name)
-        private readonly magzineModel: Model<MagzineDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: Partial<Magzine>): Promise<MagzineDocument> {
-        const magzine = new this.magzineModel(data);
-        return magzine.save();
+        return this.prisma.magzine.create({
+            data: {
+                ...data,
+                publish_date: new Date(data.publish_date),
+            } as any,
+        }) as Promise<MagzineDocument>;
     }
 
     async findAll(): Promise<MagzineDocument[]> {
-        return this.magzineModel
-            .find()
-            .sort({ publish_date: -1 })
-            .exec();
+        return this.prisma.magzine.findMany({
+            orderBy: { publish_date: 'desc' },
+        }) as Promise<MagzineDocument[]>;
     }
 
     async findById(id: string): Promise<MagzineDocument> {
-        const magzine = await this.magzineModel.findOne({ _id: id }).exec();
+        const magzine = await this.prisma.magzine.findUnique({ where: { id } });
 
         if (!magzine) {
             throw new NotFoundException(`Magzine ${id} not found`);
         }
 
-        return magzine;
+        return magzine as MagzineDocument;
     }
 
-    async update(
-        id: string,
-        update: Partial<Magzine>,
-    ): Promise<MagzineDocument> {
-        const magzine = await this.magzineModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                new: true,
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!magzine) {
+    async update(id: string, update: Partial<Magzine>): Promise<MagzineDocument> {
+        try {
+            return await this.prisma.magzine.update({
+                where: { id },
+                data: update as any,
+            }) as MagzineDocument;
+        } catch {
             throw new NotFoundException(`Magzine ${id} not found`);
         }
-
-        return magzine;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.magzineModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.magzine.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`Magzine ${id} not found`);
         }
     }

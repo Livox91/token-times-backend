@@ -1,21 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+export type ResearchDocument = Research;
 
-export type ResearchDocument = HydratedDocument<Research>;
-
-@Schema()
 export class Research {
-    @Prop({ required: true })
+    id?: string;
     title!: string;
-
-    @Prop({ required: true })
     author!: string;
-
-    @Prop({ type: Date, default: Date.now })
     publish_date!: Date;
-
-    @Prop({ required: true })
     file!: string;
 }
-
-export const ResearchSchema = SchemaFactory.createForClass(Research);

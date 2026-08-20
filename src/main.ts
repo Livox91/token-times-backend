@@ -7,11 +7,12 @@ export async function createApp() {
 
   app.enableCors({
     origin: [
-      'http://localhost:5173',
-      'https://token-times-gules.vercel.app', // <--- Add this line!
-      'https://www.tokenstimes.com'
+      'https://www.tokenstimes.com',
+      'http://localhost:5173'
     ],
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    maxAge: 86400,
   });
 
   app.use(json({ limit: '10mb' }));

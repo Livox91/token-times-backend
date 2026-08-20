@@ -1,62 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { Research, ResearchDocument } from './entities/research.entity';
 
 @Injectable()
 export class ResearchService {
-    constructor(
-        @InjectModel(Research.name)
-        private readonly researchModel: Model<ResearchDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: Partial<Research>): Promise<ResearchDocument> {
-        const research = new this.researchModel(data);
-        return research.save();
+        return this.prisma.research.create({
+            data: {
+                ...data,
+                publish_date: data.publish_date ? new Date(data.publish_date) : new Date(),
+            } as any,
+        }) as Promise<ResearchDocument>;
     }
 
     async findAll(): Promise<ResearchDocument[]> {
-        return this.researchModel
-            .find()
-            .sort({ publish_date: -1 })
-            .exec();
+        return this.prisma.research.findMany({
+            orderBy: { publish_date: 'desc' },
+        }) as Promise<ResearchDocument[]>;
     }
 
     async findById(id: string): Promise<ResearchDocument> {
-        const research = await this.researchModel.findOne({ _id: id }).exec();
+        const research = await this.prisma.research.findUnique({ where: { id } });
 
         if (!research) {
             throw new NotFoundException(`Research ${id} not found`);
         }
 
-        return research;
+        return research as ResearchDocument;
     }
 
-    async update(
-        id: string,
-        update: Partial<Research>,
-    ): Promise<ResearchDocument> {
-        const research = await this.researchModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                new: true,
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!research) {
+    async update(id: string, update: Partial<Research>): Promise<ResearchDocument> {
+        try {
+            return await this.prisma.research.update({
+                where: { id },
+                data: update as any,
+            }) as ResearchDocument;
+        } catch {
             throw new NotFoundException(`Research ${id} not found`);
         }
-
-        return research;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.researchModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.research.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`Research ${id} not found`);
         }
     }

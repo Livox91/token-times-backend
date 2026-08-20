@@ -16,8 +16,7 @@
     "baseUrl": ".",
     "types": [
       "node",
-      "@nestjs/common",
-      "@nestjs/mongoose"
+      "@nestjs/common"
     ],
     "incremental": true,
     "skipLibCheck": true,

@@ -53,6 +53,10 @@ export class CryptoService {
         }
     }
 
+    async get24HourTickerData(symbol = 'BTCUSDT') {
+        return this.getMarketTrend(symbol, '1h', 24);
+    }
+
     /**
      * Latest price
      */

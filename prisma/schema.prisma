@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  
+}
+
+model Article {
+  id            String   @id @default(cuid())
+  title         String
+  source        String   @unique
+  content       String
+  publish_date  DateTime @default(now())
+  tags          String[] @default([])
+  attachments   Json?    @default("[]")
+  comments      Json?    @default("[]")
+  status        String   @default("fetched")
+  fetch_attempts Int     @default(0)
+  last_fetch    DateTime @default(now())
+  error         String?
+}
+
+model Draft {
+  id                  String   @id @default(cuid())
+  original_articleid  String
+  article             String
+  summary             String
+  category            Json?
+  tags                Json?
+  headlines           Json?
+  status              String   @default("draft")
+}
+
+model Events {
+  id               String   @id @default(cuid())
+  event_title      String
+  event_venue      String
+  event_adress     String
+  event_date       DateTime
+  event_guests     String[] @default([])
+  event_description String
+  event_hosts      String[] @default([])
+  event_agenda     String
+  image            String
+}
+
+model Interviews {
+  id               String   @id @default(cuid())
+  questions        String[] @default([])
+  answers          String[] @default([])
+  interviewee_name String
+  interviewer_name String
+  interview_title  String
+  interviewee_image String
+  publish_date     DateTime @default(now())
+  tags            String[] @default([])
+  category        String[] @default([])
+}
+
+model KnowlegeHub {
+  id           String   @id @default(cuid())
+  question     String
+  answer       String
+  author       String
+  publish_date DateTime @default(now())
+  tags         String[] @default([])
+  category     String[] @default([])
+}
+
+model Magzine {
+  id            String   @id @default(cuid())
+  title         String
+  cover_img     String
+  description   String
+  price         Float
+  issue_name    String
+  publish_date  DateTime @default(now())
+  file          String
+}
+
+model PublishedNews {
+  id                   String   @id @default(cuid())
+  title                String
+  summary              String
+  article              String
+  author               String
+  image                String
+  approx_time_to_read  Int
+  category             String[] @default([])
+  tags                 String[] @default([])
+  view_count           Int      @default(0)
+  headlines            String[] @default([])
+  display_section      String[] @default([])
+  status               String   @default("published")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Regulation {
+  id           String   @id @default(cuid())
+  title        String
+  authority    String
+  publish_date DateTime @default(now())
+  file         String
+}
+
+model Research {
+  id           String   @id @default(cuid())
+  title        String
+  author       String
+  publish_date DateTime @default(now())
+  file         String
+}

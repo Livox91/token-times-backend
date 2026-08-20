@@ -1,62 +1,58 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { KnowlegeHub, KnowlegeHubDocument } from './knowlege-hub.entity';
 
 @Injectable()
 export class KnowlegeHubService {
-    constructor(
-        @InjectModel(KnowlegeHub.name)
-        private readonly knowlegeHubModel: Model<KnowlegeHubDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: Partial<KnowlegeHub>): Promise<KnowlegeHubDocument> {
-        const knowlegeHub = new this.knowlegeHubModel(data);
-        return knowlegeHub.save();
+        return this.prisma.knowlegeHub.create({
+            data: {
+                ...data,
+                publish_date: data.publish_date ? new Date(data.publish_date) : new Date(),
+                tags: data.tags ?? [],
+                category: data.category ?? [],
+            } as any,
+        }) as Promise<KnowlegeHubDocument>;
     }
 
     async findAll(): Promise<KnowlegeHubDocument[]> {
-        return this.knowlegeHubModel
-            .find()
-            .sort({ publish_date: -1 })
-            .exec();
+        return this.prisma.knowlegeHub.findMany({
+            orderBy: { publish_date: 'desc' },
+        }) as Promise<KnowlegeHubDocument[]>;
     }
 
     async findById(id: string): Promise<KnowlegeHubDocument> {
-        const knowlegeHub = await this.knowlegeHubModel.findOne({ _id: id }).exec();
+        const knowlegeHub = await this.prisma.knowlegeHub.findUnique({ where: { id } });
 
         if (!knowlegeHub) {
             throw new NotFoundException(`KnowlegeHub ${id} not found`);
         }
 
-        return knowlegeHub;
+        return knowlegeHub as KnowlegeHubDocument;
     }
 
-    async update(
-        id: string,
-        update: Partial<KnowlegeHub>,
-    ): Promise<KnowlegeHubDocument> {
-        const knowlegeHub = await this.knowlegeHubModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                new: true,
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!knowlegeHub) {
+    async update(id: string, update: Partial<KnowlegeHub>): Promise<KnowlegeHubDocument> {
+        try {
+            return await this.prisma.knowlegeHub.update({
+                where: { id },
+                data: {
+                    ...update,
+                    tags: update.tags ?? undefined,
+                    category: update.category ?? undefined,
+                } as any,
+            }) as KnowlegeHubDocument;
+        } catch {
             throw new NotFoundException(`KnowlegeHub ${id} not found`);
         }
-
-        return knowlegeHub;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.knowlegeHubModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.knowlegeHub.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`KnowlegeHub ${id} not found`);
         }
     }

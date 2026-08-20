@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { Events, EventsDocument } from './events.entity';
 
@@ -8,57 +7,54 @@ type EventWritePayload = Partial<Events>;
 
 @Injectable()
 export class EventsService {
-    constructor(
-        @InjectModel(Events.name)
-        private readonly eventsModel: Model<EventsDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: EventWritePayload): Promise<EventsDocument> {
-        const event = new this.eventsModel(data);
-        return event.save();
+        return this.prisma.events.create({
+            data: {
+                ...data,
+                event_date: new Date(data.event_date),
+                event_guests: data.event_guests ?? [],
+                event_hosts: data.event_hosts ?? [],
+            } as any,
+        }) as Promise<EventsDocument>;
     }
 
     async findAll(): Promise<EventsDocument[]> {
-        return this.eventsModel
-            .find()
-            .sort({ event_date: -1 })
-            .exec();
+        return this.prisma.events.findMany({
+            orderBy: { event_date: 'desc' },
+        }) as Promise<EventsDocument[]>;
     }
 
     async findById(id: string): Promise<EventsDocument> {
-        const event = await this.eventsModel.findOne({ _id: id }).exec();
+        const event = await this.prisma.events.findUnique({ where: { id } });
 
         if (!event) {
             throw new NotFoundException(`Event ${id} not found`);
         }
 
-        return event;
+        return event as EventsDocument;
     }
 
-    async update(
-        id: string,
-        update: EventWritePayload,
-    ): Promise<EventsDocument> {
-        const event = await this.eventsModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                new: true,
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!event) {
+    async update(id: string, update: EventWritePayload): Promise<EventsDocument> {
+        try {
+            return await this.prisma.events.update({
+                where: { id },
+                data: {
+                    ...update,
+                    event_guests: update.event_guests ?? undefined,
+                    event_hosts: update.event_hosts ?? undefined,
+                } as any,
+            }) as EventsDocument;
+        } catch {
             throw new NotFoundException(`Event ${id} not found`);
         }
-
-        return event;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.eventsModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.events.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`Event ${id} not found`);
         }
     }

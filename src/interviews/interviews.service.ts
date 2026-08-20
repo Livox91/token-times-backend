@@ -1,62 +1,62 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { Interviews, InterviewsDocument } from './interviews.entity';
 
 @Injectable()
 export class InterviewsService {
-    constructor(
-        @InjectModel(Interviews.name)
-        private readonly interviewsModel: Model<InterviewsDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: Partial<Interviews>): Promise<InterviewsDocument> {
-        const interview = new this.interviewsModel(data);
-        return interview.save();
+        return this.prisma.interviews.create({
+            data: {
+                ...data,
+                publish_date: data.publish_date ? new Date(data.publish_date) : new Date(),
+                questions: data.questions ?? [],
+                answers: data.answers ?? [],
+                tags: data.tags ?? [],
+                category: data.category ?? [],
+            } as any,
+        }) as Promise<InterviewsDocument>;
     }
 
     async findAll(): Promise<InterviewsDocument[]> {
-        return this.interviewsModel
-            .find()
-            .sort({ publish_date: -1 })
-            .exec();
+        return this.prisma.interviews.findMany({
+            orderBy: { publish_date: 'desc' },
+        }) as Promise<InterviewsDocument[]>;
     }
 
     async findById(id: string): Promise<InterviewsDocument> {
-        const interview = await this.interviewsModel.findOne({ _id: id }).exec();
+        const interview = await this.prisma.interviews.findUnique({ where: { id } });
 
         if (!interview) {
             throw new NotFoundException(`Interview ${id} not found`);
         }
 
-        return interview;
+        return interview as InterviewsDocument;
     }
 
-    async update(
-        id: string,
-        update: Partial<Interviews>,
-    ): Promise<InterviewsDocument> {
-        const interview = await this.interviewsModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                new: true,
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!interview) {
+    async update(id: string, update: Partial<Interviews>): Promise<InterviewsDocument> {
+        try {
+            return await this.prisma.interviews.update({
+                where: { id },
+                data: {
+                    ...update,
+                    questions: update.questions ?? undefined,
+                    answers: update.answers ?? undefined,
+                    tags: update.tags ?? undefined,
+                    category: update.category ?? undefined,
+                } as any,
+            }) as InterviewsDocument;
+        } catch {
             throw new NotFoundException(`Interview ${id} not found`);
         }
-
-        return interview;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.interviewsModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.interviews.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`Interview ${id} not found`);
         }
     }

@@ -1,84 +1,75 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { PrismaService } from '../prisma/prisma.service';
 
 import { PublishedNews, PublishedNewsDocument } from './published-news.entity';
 
 @Injectable()
 export class PublishedNewsService {
-    constructor(
-        @InjectModel(PublishedNews.name)
-        private readonly publishedNewsModel: Model<PublishedNewsDocument>,
-    ) { }
+    constructor(private readonly prisma: PrismaService) { }
 
     async create(data: Partial<PublishedNews>): Promise<PublishedNewsDocument> {
-        const publishedNews = new this.publishedNewsModel(data);
-        return publishedNews.save();
+        return this.prisma.publishedNews.create({
+            data: {
+                ...data,
+                category: data.category ?? [],
+                tags: data.tags ?? [],
+                headlines: data.headlines ?? [],
+                display_section: data.display_section ?? [],
+                view_count: data.view_count ?? 0,
+                status: data.status ?? 'published',
+            } as any,
+        }) as Promise<PublishedNewsDocument>;
     }
 
     async findAll(): Promise<PublishedNewsDocument[]> {
-        return this.publishedNewsModel
-            .find()
-            .sort({ createdAt: -1 })
-            .exec();
+        return this.prisma.publishedNews.findMany({
+            orderBy: { createdAt: 'desc' },
+        }) as Promise<PublishedNewsDocument[]>;
     }
 
     async findById(id: string): Promise<PublishedNewsDocument> {
-        const publishedNews = await this.publishedNewsModel.findOne({ _id: id }).exec();
+        const publishedNews = await this.prisma.publishedNews.findUnique({ where: { id } });
 
         if (!publishedNews) {
             throw new NotFoundException(`Published news ${id} not found`);
         }
 
-        return publishedNews;
+        return publishedNews as PublishedNewsDocument;
     }
 
-    async update(
-        id: string,
-        update: Partial<PublishedNews>,
-    ): Promise<PublishedNewsDocument> {
-        const publishedNews = await this.publishedNewsModel.findOneAndUpdate(
-            { _id: id },
-            update,
-            {
-                returnDocument: 'after',
-                runValidators: true,
-            },
-        ).exec();
-
-        if (!publishedNews) {
+    async update(id: string, update: Partial<PublishedNews>): Promise<PublishedNewsDocument> {
+        try {
+            return await this.prisma.publishedNews.update({
+                where: { id },
+                data: {
+                    ...update,
+                    category: update.category ?? undefined,
+                    tags: update.tags ?? undefined,
+                    headlines: update.headlines ?? undefined,
+                    display_section: update.display_section ?? undefined,
+                } as any,
+            }) as PublishedNewsDocument;
+        } catch {
             throw new NotFoundException(`Published news ${id} not found`);
         }
-
-        return publishedNews;
     }
 
     async delete(id: string): Promise<void> {
-        const result = await this.publishedNewsModel.findOneAndDelete({ _id: id }).exec();
-
-        if (!result) {
+        try {
+            await this.prisma.publishedNews.delete({ where: { id } });
+        } catch {
             throw new NotFoundException(`Published news ${id} not found`);
         }
     }
 
     async archive(id: string): Promise<PublishedNewsDocument> {
-        const publishedNews = await this.publishedNewsModel
-            .findOneAndUpdate(
-                { _id: id },
-                { status: 'archived' },
-                {
-                    returnDocument: 'after',
-                    runValidators: true,
-                },
-            )
-            .exec();
-
-        if (!publishedNews) {
+        try {
+            return await this.prisma.publishedNews.update({
+                where: { id },
+                data: { status: 'archived' },
+            }) as PublishedNewsDocument;
+        } catch {
             throw new NotFoundException(`Published news ${id} not found`);
         }
-
-        return publishedNews;
     }
-
-
 }

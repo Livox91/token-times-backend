@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ScheduleModule } from '@nestjs/schedule';
 import { HttpModule } from '@nestjs/axios';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -20,23 +19,17 @@ import { InterviewsModule } from './interviews/interviews.module';
 import { EventsModule } from './events/events.module';
 import { FilesModule } from './files/files.module';
 import { PublishedNewsModule } from './published-news/published-news.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Makes the module available everywhere
-      envFilePath: '.env', // Optional: defaults to .env in the root folder
+      isGlobal: true,
+      envFilePath: '.env',
     }),
+    PrismaModule,
     // ScheduleModule.forRoot(),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        uri: configService.get<string>('MONGODB_URI') || 'mongodb://localhost:27017/tokentimes',
-      }),
-      inject: [ConfigService],
-    }),
     HttpModule,
-
     ArticlesModule, DraftModule, NewsModule, CryptoModule, ForexModule, ResearchModule, RegulationModule, MagzineModule, KnowlegeHubModule, InterviewsModule, EventsModule, FilesModule, PublishedNewsModule
   ],
   providers: [

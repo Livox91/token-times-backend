@@ -5,6 +5,8 @@ import { CryptoService } from './crypto.service';
 export class CryptoController {
     constructor(private readonly cryptoService: CryptoService) { }
 
+
+    @Get()
     @Get('trend')
     async trend(
         @Query('symbol') symbol = 'BTCUSDT',
@@ -16,6 +18,11 @@ export class CryptoController {
             interval,
             Number(limit),
         );
+    }
+
+    @Get('ticker/24h')
+    async ticker24h(@Query('symbol') symbol = 'BTCUSDT') {
+        return this.cryptoService.get24HourTickerData(symbol);
     }
 
     @Get('price')

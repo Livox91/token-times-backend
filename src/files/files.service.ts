@@ -1,9 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
-import { basename, extname } from 'path';
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { randomUUID } from 'crypto';
+import { basename, extname } from 'path';
 
 type UploadUrlRequest = {
     filename: string;
@@ -27,14 +27,14 @@ export class FilesService {
     constructor(private readonly configService: ConfigService) { }
 
     private getRequiredAwsConfig() {
-        const region = this.configService.get<string>('AWS_REGION');
-        const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID');
-        const secretAccessKey = this.configService.get<string>('AWS_SECRET_ACCESS_KEY');
-        const bucket = this.configService.get<string>('AWS_BUCKET');
+        const region = this.configService.get<string>('AWS_REGION') ?? this.configService.get<string>('region_name');
+        const accessKeyId = this.configService.get<string>('AWS_ACCESS_KEY_ID') ?? this.configService.get<string>('ACCESS_KEY_ID');
+        const secretAccessKey = this.configService.get<string>('AWS_SECRET_ACCESS_KEY') ?? this.configService.get<string>('SECRET_ACCESS_KEY');
+        const bucket = this.configService.get<string>('AWS_BUCKET') ?? this.configService.get<string>('SUPABASE_BUCKET');
+        const endpoint = this.configService.get<string>('AWS_ENDPOINT') ?? this.configService.get<string>('endpoint_url');
 
-
-        if (!region || !accessKeyId || !secretAccessKey || !bucket) {
-            throw new InternalServerErrorException('AWS S3 configuration is missing.');
+        if (!region || !accessKeyId || !secretAccessKey || !bucket || !endpoint) {
+            throw new InternalServerErrorException('Supabase Storage S3 configuration is missing.');
         }
 
         return {
@@ -42,15 +42,18 @@ export class FilesService {
             accessKeyId,
             secretAccessKey,
             bucket,
+            endpoint,
         };
     }
 
     private getClient() {
         if (!this.s3Client) {
-            const { region, accessKeyId, secretAccessKey } = this.getRequiredAwsConfig();
+            const { region, accessKeyId, secretAccessKey, endpoint } = this.getRequiredAwsConfig();
 
             this.s3Client = new S3Client({
+                forcePathStyle: true,
                 region,
+                endpoint,
                 credentials: {
                     accessKeyId,
                     secretAccessKey,
