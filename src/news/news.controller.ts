@@ -5,8 +5,10 @@ import {
     Get,
     Param,
     Patch,
+    UseGuards,
 } from '@nestjs/common';
 import { DraftService } from '../drafts/draft.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('news')
 export class NewsController {
@@ -36,6 +38,7 @@ export class NewsController {
     }
 
     @Delete('drafts/:id')
+    @UseGuards(JwtAuthGuard)
     async deleteDraft(
         @Param('id') id: string,
     ) {

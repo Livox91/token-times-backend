@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { RegulationService } from './regulation.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('regulation')
 export class RegulationController {
@@ -27,6 +29,7 @@ export class RegulationController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createRegulation(
         @Body() body: {
             title: string;
@@ -52,6 +55,7 @@ export class RegulationController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteRegulation(
         @Param('id') id: string,
     ) {

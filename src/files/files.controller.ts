@@ -1,12 +1,14 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 
 import { FilesService } from './files.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('files')
 export class FilesController {
     constructor(private readonly filesService: FilesService) { }
 
     @Post('upload-url')
+    @UseGuards(JwtAuthGuard)
     async createUploadUrl(
         @Body() body: {
             filename: string;
@@ -18,6 +20,7 @@ export class FilesController {
     }
 
     @Post('download-url')
+    @UseGuards(JwtAuthGuard)
     async createDownloadUrl(
         @Body() body: {
             fileKey: string;
@@ -28,6 +31,7 @@ export class FilesController {
     }
 
     @Post('delete-url')
+    @UseGuards(JwtAuthGuard)
     async createDeleteUrl(
         @Body() body: {
             fileKey: string;

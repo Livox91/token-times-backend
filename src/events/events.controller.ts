@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { EventsService } from './events.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('events')
 export class EventsController {
@@ -27,6 +29,7 @@ export class EventsController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createEvent(
         @Body() body: {
             event_title: string;
@@ -62,6 +65,7 @@ export class EventsController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteEvent(
         @Param('id') id: string,
     ) {

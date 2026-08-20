@@ -9,6 +9,7 @@ import { HttpModule } from '@nestjs/axios'; // <-- 1. Import HttpModule
 
 import { ArticlesModule } from '../articles/articles.module';
 import { DraftModule } from '../drafts/draft.module'; // <-- IMPORT THE MODULE HERE
+import { AuthModule } from '../auth/auth.module';
 import { NewsScheduler } from './news.scheduler';
 
 @Module({
@@ -16,6 +17,7 @@ import { NewsScheduler } from './news.scheduler';
         HttpModule,
         ArticlesModule,
         DraftModule,
+        AuthModule,
     ],
     providers: [
         HttpService,

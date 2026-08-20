@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { KnowlegeHubService } from './knowlege-hub.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('knowlege-hub')
 export class KnowlegeHubController {
@@ -27,6 +29,7 @@ export class KnowlegeHubController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createKnowlegeHub(
         @Body() body: {
             question: string;
@@ -56,6 +59,7 @@ export class KnowlegeHubController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteKnowlegeHub(
         @Param('id') id: string,
     ) {

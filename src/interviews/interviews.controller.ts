@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { InterviewsService } from './interviews.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('interviews')
 export class InterviewsController {
@@ -27,6 +29,7 @@ export class InterviewsController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createInterview(
         @Body() body: {
             questions: string[];
@@ -62,6 +65,7 @@ export class InterviewsController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteInterview(
         @Param('id') id: string,
     ) {

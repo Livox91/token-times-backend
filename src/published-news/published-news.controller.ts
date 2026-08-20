@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { PublishedNewsService } from './published-news.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { filter } from 'node_modules/cheerio/dist/commonjs/api/traversing';
 
 @Controller('published-news')
@@ -28,6 +30,7 @@ export class PublishedNewsController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createPublishedNews(
         @Body() body: {
             title: string;
@@ -67,6 +70,7 @@ export class PublishedNewsController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deletePublishedNews(
         @Param('id') id: string,
     ) {
@@ -74,6 +78,7 @@ export class PublishedNewsController {
     }
 
     @Post('archive/:id')
+    @UseGuards(JwtAuthGuard)
     async archivePublishedNews(
         @Param('id') id: string,
     ) {

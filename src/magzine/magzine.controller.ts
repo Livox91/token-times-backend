@@ -6,9 +6,11 @@ import {
     Param,
     Post,
     Put,
+    UseGuards,
 } from '@nestjs/common';
 
 import { MagzineService } from './magzine.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('magzine')
 export class MagzineController {
@@ -27,6 +29,7 @@ export class MagzineController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async createMagzine(
         @Body() body: {
             title: string;
@@ -58,6 +61,7 @@ export class MagzineController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard)
     async deleteMagzine(
         @Param('id') id: string,
     ) {
