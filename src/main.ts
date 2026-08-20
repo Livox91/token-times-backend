@@ -6,12 +6,21 @@ export async function createApp() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: [
-      'https://www.tokenstimes.com',
-      'http://localhost:5173'
-    ],
+    origin: (origin, callback) => {
+      const isLocalOrigin = origin?.match(/^https?:\/\/localhost:\d+$/);
+      const isProductionOrigin = origin === 'https://www.tokenstimes.com'
+        || origin === 'https://tokenstimes.com';
+
+      if (!origin || isLocalOrigin || isProductionOrigin) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error('Origin not allowed by CORS'));
+    },
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 86400,
   });
 
