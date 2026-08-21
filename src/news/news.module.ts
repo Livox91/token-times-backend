@@ -11,6 +11,7 @@ import { ArticlesModule } from '../articles/articles.module';
 import { DraftModule } from '../drafts/draft.module'; // <-- IMPORT THE MODULE HERE
 import { AuthModule } from '../auth/auth.module';
 import { NewsScheduler } from './news.scheduler';
+import { NewsController } from './news.controller';
 
 @Module({
     imports: [
@@ -18,6 +19,9 @@ import { NewsScheduler } from './news.scheduler';
         ArticlesModule,
         DraftModule,
         AuthModule,
+    ],
+    controllers: [
+        NewsController,
     ],
     providers: [
         HttpService,
