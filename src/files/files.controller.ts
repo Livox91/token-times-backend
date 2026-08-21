@@ -20,7 +20,6 @@ export class FilesController {
     }
 
     @Post('download-url')
-    @UseGuards(JwtAuthGuard)
     async createDownloadUrl(
         @Body() body: {
             fileKey: string;

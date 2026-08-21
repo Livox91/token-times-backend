@@ -21,6 +21,7 @@ import { FilesModule } from './files/files.module';
 import { PublishedNewsModule } from './published-news/published-news.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -31,7 +32,7 @@ import { AuthModule } from './auth/auth.module';
     PrismaModule,
     // ScheduleModule.forRoot(),
     HttpModule,
-    ArticlesModule, DraftModule, NewsModule, CryptoModule, ForexModule, ResearchModule, RegulationModule, MagzineModule, KnowlegeHubModule, InterviewsModule, EventsModule, FilesModule, PublishedNewsModule, AuthModule
+    ArticlesModule, DraftModule, NewsModule, CryptoModule, ForexModule, ResearchModule, RegulationModule, MagzineModule, KnowlegeHubModule, InterviewsModule, EventsModule, FilesModule, PublishedNewsModule, AuthModule, AnalyticsModule
   ],
   providers: [
     AppService
