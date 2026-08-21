@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Param } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
 
@@ -20,5 +20,15 @@ export class AuthController {
     @Post('login')
     login(@Body() credentials: Credentials) {
         return this.authService.login(credentials);
+    }
+
+    @Get('getAdmins')
+    getAdmins() {
+        return this.authService.getAdmins();
+    }
+
+    @Delete('admins/:id')
+    deleteAdmin(@Param('id') id: string) {
+        return this.authService.deleteAdmin(id);
     }
 }

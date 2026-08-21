@@ -76,4 +76,19 @@ export class AuthService {
             throw new UnauthorizedException('Email and password are required');
         }
     }
+
+    async getAdmins() {
+        return this.prisma.user.findMany({
+            select: { id: true, email: true },
+        });
+    }
+
+    async deleteAdmin(id: string) {
+        if (id === "cmt2ejj7j000004jo88qplpu3") {
+            throw new UnauthorizedException("Cannot delete the main admin user");
+        }
+        return this.prisma.user.delete({
+            where: { id },
+        });
+    }
 }
